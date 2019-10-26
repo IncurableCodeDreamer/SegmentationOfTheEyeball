@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 26-Oct-2019 09:42:38
+% Last Modified by GUIDE v2.5 26-Oct-2019 18:21:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,112 +73,131 @@ function varargout = main_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in dotsStart.
+function dotsStart_Callback(hObject, eventdata, handles)
+% hObject    handle to dotsStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in dotSave.
+function dotSave_Callback(hObject, eventdata, handles)
+% hObject    handle to dotSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in linesStart.
+function linesStart_Callback(hObject, eventdata, handles)
+% hObject    handle to linesStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+% --- Executes on button press in linesSave.
+function linesSave_Callback(hObject, eventdata, handles)
+% hObject    handle to linesSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton5.
-function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
+% --- Executes on button press in effusionStart.
+function effusionStart_Callback(hObject, eventdata, handles)
+% hObject    handle to effusionStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton6.
-function pushbutton6_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton6 (see GCBO)
+% --- Executes on button press in effusionSave.
+function effusionSave_Callback(hObject, eventdata, handles)
+% hObject    handle to effusionSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton7.
-function pushbutton7_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton7 (see GCBO)
+% --- Executes on button press in show.
+function show_Callback(hObject, eventdata, handles)
+% hObject    handle to show (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton8.
-function pushbutton8_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton8 (see GCBO)
+% --- Executes on button press in dotsCheckbox.
+function dotsCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to dotsCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of dotsCheckbox
+
+
+% --- Executes on button press in linesCheckbox.
+function linesCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to linesCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of linesCheckbox
+
+
+% --- Executes on button press in effusionCheckbox.
+function effusionCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to effusionCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of effusionCheckbox
+
+
+
+% --- Executes on button press in selectPhotoLeft.
+function selectPhotoLeft_Callback(hObject, eventdata, handles)
+global leftPhoto; 
+global leftPhotoSize;
+cla(handles.photoLeft,'reset');
+set(handles.dotsText, 'String', '');
+set(handles.linesText, 'String', '');
+set(handles.effusionText, 'String', '');
+
+path=uigetfile('*.jpg');
+leftPhoto=imread(path);
+leftPhotoSize = size(leftPhoto);
+set(handles.photoLeft,'Units','pixels');
+resizePos = get(handles.photoLeft,'Position');
+leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
+axes(handles.photoLeft);
+imshow(leftPhoto);
+set(handles.leftPhoto,'Units','normalized');
+
+% --- Executes on button press in exportPhotoLeft.
+function exportPhotoLeft_Callback(hObject, eventdata, handles)
+% hObject    handle to exportPhotoLeft (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in checkbox1.
-function checkbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% --- Executes on button press in selectPhotoRight.
+function selectPhotoRight_Callback(hObject, eventdata, handles)
+global rightPhoto; 
+global rightPhotoSize;
+cla(handles.photoRight,'reset');
+% set(handles.dotsText, 'String', '');
+% set(handles.linesText, 'String', '');
+% set(handles.effusionText, 'String', '');
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox1
-
-
-% --- Executes on button press in checkbox2.
-function checkbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox2
-
-
-% --- Executes on button press in checkbox3.
-function checkbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox3
+path=uigetfile('*.jpg');
+rightPhoto=imread(path);
+rightPhotoSize = size(rightPhoto);
+set(handles.photoRight,'Units','pixels');
+resizePos = get(handles.photoRight,'Position');
+rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
+axes(handles.photoRight);
+imshow(rightPhoto);
+set(handles.rightPhoto,'Units','normalized');
 
 
-% --- Executes on button press in pushbutton11.
-function pushbutton11_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton12.
-function pushbutton12_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton13.
-function pushbutton13_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton13 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton14.
-function pushbutton14_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton14 (see GCBO)
+% --- Executes on button press in exportPhotoRight.
+function exportPhotoRight_Callback(hObject, eventdata, handles)
+% hObject    handle to exportPhotoRight (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
