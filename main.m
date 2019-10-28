@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 26-Oct-2019 18:21:14
+% Last Modified by GUIDE v2.5 28-Oct-2019 09:01:02
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -68,16 +68,16 @@ clc;
 clear all;
 
 function dotsStart_Callback(hObject, eventdata, handles)
-numPointsClicked = 0;
-while true
-  numPointsClicked = numPointsClicked + 1
-  [x(numPointsClicked), y(numPointsClicked)] = ginput(1);
-   hold(handles.photoLeft,'on');
-  plot(x(numPointsClicked), y(numPointsClicked), 'yo', 'MarkerSize', 15);
-%   if button == 3
-    % Exit loop if
-%     break;
-%   end
+numDotsClicked = 0;
+dotsCount = 0;
+global stopState;
+stopState = 0;
+while ~stopState 
+  numDotsClicked = numDotsClicked + 1;
+  [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
+  hold(handles.photoLeft,'on');
+  dotsCount = dotsCount + 1;
+  plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 15);
 end
 
 % --- Executes on button press in dotSave.
@@ -177,4 +177,10 @@ imshow(rightPhoto);
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
-imwrite(Image.cdata, 'mask_image_R.jpg');
+answer = inputdlg('Podaj nazw pliku','Nazwa pliku', [1 50]);
+imwrite(Image.cdata, strcat(answer,'.jpg'));
+
+function dotsStop_Callback(hObject, eventdata, handles)
+global stopState;
+stopState = 1;
+guidata(hObject, handles);
