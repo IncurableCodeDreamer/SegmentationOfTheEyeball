@@ -68,23 +68,27 @@ clc;
 clear all;
 
 function dotsStart_Callback(hObject, eventdata, handles)
-numDotsClicked = 0;
-dotsCount = 0;
+global numDotsClicked;
 global stopState;
+global x;
+global y;
+numDotsClicked = 0;
 stopState = 0;
+dotsCount = 0;
 while ~stopState 
   numDotsClicked = numDotsClicked + 1;
   [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
   hold(handles.photoLeft,'on');
   dotsCount = dotsCount + 1;
+  set(handles.dotsText, 'String', dotsCount);
+  drawnow;
   plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 15);
 end
 
-% --- Executes on button press in dotSave.
 function dotSave_Callback(hObject, eventdata, handles)
-% hObject    handle to dotSave (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+global leftPhoto; 
+axes(handles.photoLeft);
+imshow(leftPhoto);
 
 % --- Executes on button press in linesStart.
 function linesStart_Callback(hObject, eventdata, handles)
@@ -116,12 +120,14 @@ function show_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% --- Executes on button press in dotsCheckbox.
 function dotsCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to dotsCheckbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Hint: get(hObject,'Value') returns toggle state of dotsCheckbox
+global numDotsClicked;
+global x;
+global y;
+for i=0:numDotsClicked
+   hold(handles.photoLeft,'on');
+   plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 15);
+end
 
 % --- Executes on button press in linesCheckbox.
 function linesCheckbox_Callback(hObject, eventdata, handles)
