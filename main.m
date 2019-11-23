@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 28-Oct-2019 09:01:02
+% Last Modified by GUIDE v2.5 23-Nov-2019 21:19:52
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -107,6 +107,11 @@ function effusionStart_Callback(hObject, eventdata, handles)
 % hObject    handle to effusionStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+    activeWindow = handles.photoLeft;
+    handleMask = imfreehand(activeWindow)
+    mask = createMask(handleMask);
+    area=regionprops(double(mask),'Area')
+    set(handles.effusionText, 'String', num2str(area.Area));
 
 % --- Executes on button press in effusionSave.
 function effusionSave_Callback(hObject, eventdata, handles)
