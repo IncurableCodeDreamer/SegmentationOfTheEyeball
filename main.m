@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 23-Nov-2019 21:19:52
+% Last Modified by GUIDE v2.5 01-Dec-2019 13:55:44
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -112,13 +112,21 @@ function effusionStart_Callback(hObject, eventdata, handles)
     mask = createMask(handleMask);
     area=regionprops(double(mask),'Area')
     set(handles.effusionText, 'String', num2str(area.Area));
+ 
 
+  
 % --- Executes on button press in effusionSave.
 function effusionSave_Callback(hObject, eventdata, handles)
 % hObject    handle to effusionSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+saveLeft = getframe(handles.photoLeft);
+Image = frame2im(saveLeft);
+imwrite(Image, 'obrys_wylewu.jpg')
 
+saveLeft = getframe(handles.photoRight);
+Image = frame2im(saveLeft);
+imwrite(Image, 'wysegmentowany_wylew.jpg')
 % --- Executes on button press in show.
 function show_Callback(hObject, eventdata, handles)
 % hObject    handle to show (see GCBO)
@@ -165,6 +173,7 @@ leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
+
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
 imwrite(Image.cdata, 'mask_image_L.jpg');
@@ -185,6 +194,12 @@ resizePos = get(handles.photoRight,'Position');
 rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
 imshow(rightPhoto);
+BW = roipoly(rightPhoto);
+imshow(BW);
+area=regionprops(double(BW),'Area')
+set(handles.effusionText, 'String', num2str(area.Area));
+
+
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
@@ -195,3 +210,4 @@ function dotsStop_Callback(hObject, eventdata, handles)
 global stopState;
 stopState = 1;
 guidata(hObject, handles);
+
