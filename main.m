@@ -68,32 +68,34 @@ clc;
 clear all;
 
 function dotsStart_Callback(hObject, eventdata, handles)
-global numDotsClicked;
-global stopState;
-global x;
-global y;
+global stopDots;
 numDotsClicked = 0;
 dotsCount = 0;
-stopDots=0;
 
-value=get(handles.dotsStart,'string');
-if(strcmp(value,'Stop'))
-    set(handles.dotsStart,'string','Kropki');
-    stopDots=1;
-end
-if(strcmp(value,'Kropki'))
-    set(handles.dotsStart,'string','Stop');
-end
+value = get(handles.dotsStart,'string');
+    if(strcmp(value,'Kropki'))
+        stopDots = 0;
+        set(handles.dotsStart,'string','Stop');
+    elseif(strcmp(value,'Stop'))
+        stopDots = 1;
+        set(handles.dotsStart,'string','Kropki');
+    end
 
-while(stopDots==0)
+while ~stopDots
+  disp('petla');
   numDotsClicked = numDotsClicked + 1;
   [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
   hold(handles.photoLeft,'on');
   dotsCount = dotsCount + 1;
   set(handles.dotsText, 'String', dotsCount);
-  drawnow;
   plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
+  handles.numDotsClicked = numDotsClicked - 1;
+  handles.dotsArray = [x,y];
 end
+
+disp('koniec');
+set(handles.dotsText, 'String', dotsCount-1);
+guidata(hObject, handles);
 
 function dotSave_Callback(hObject, eventdata, handles)
 global leftPhoto; 
@@ -133,8 +135,6 @@ function effusionStart_Callback(hObject, eventdata, handles)
     mask = createMask(handleMask);
     area=regionprops(double(mask),'Area')
     set(handles.effusionText, 'String', num2str(area.Area));
- 
-
   
 % --- Executes on button press in effusionSave.
 function effusionSave_Callback(hObject, eventdata, handles)
@@ -150,11 +150,21 @@ function show_Callback(hObject, eventdata, handles)
 
 function dotsCheckbox_Callback(hObject, eventdata, handles)
 global numDotsClicked;
-global x;
-global y;
+global data;
+% g/lobal y;
+disp('bfdvsbrgsd');
+numDotsClicked = handles.numDotsClicked
+data = handles.dotsArray
+
+disp('bbbbb');
+% numDotsClicked
+% y 
+% x
+% [x y]
 for i=0:numDotsClicked
    hold(handles.photoLeft,'on');
-   plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 15);
+   hold on;
+   plot(a(numDotsClicked), b(numDotsClicked), 'yo', 'MarkerSize', 10)
 end
 
 % --- Executes on button press in linesCheckbox.
@@ -187,7 +197,6 @@ resizePos = get(handles.photoLeft,'Position');
 leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
-
 
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
