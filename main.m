@@ -109,8 +109,7 @@ while(stop==0)
 M = imfreehand(gca,'Closed',0);
 lines= sum(M.createMask);
 lines=lines + sum(lines);
- set(handles.linesText, 'String', num2str(lines));
- stop = handles.stop;
+set(handles.linesText, 'String', num2str(lines));
 end
 % --- Executes on button press in linesSave.
 function linesSave_Callback(hObject, eventdata, handles)
