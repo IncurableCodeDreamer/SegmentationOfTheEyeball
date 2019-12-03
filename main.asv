@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 03-Dec-2019 08:34:20
+% Last Modified by GUIDE v2.5 03-Dec-2019 08:25:54
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -61,7 +61,8 @@ function varargout = main_OutputFcn(hObject, eventdata, handles)
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+handles.photoRight=[]
+handles.rightPhoto=[]
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 clc;
@@ -120,7 +121,13 @@ function effusionSave_Callback(hObject, eventdata, handles)
 % hObject    handle to effusionSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+saveLeft = getframe(handles.photoLeft);
+Image = frame2im(saveLeft);
+imwrite(Image, 'obrys_wylewu.jpg')
 
+saveLeft = getframe(handles.photoRight);
+Image = frame2im(saveLeft);
+imwrite(Image, 'wysegmentowany_wylew.jpg')
 % --- Executes on button press in show.
 function show_Callback(hObject, eventdata, handles)
 % hObject    handle to show (see GCBO)
@@ -188,14 +195,19 @@ resizePos = get(handles.photoRight,'Position');
 rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
 imshow(rightPhoto);
- 
+% 
 a=rgb2gray(rightPhoto);
+
 imshow(a)
 imData=reshape(a,[],1);
 imData=double(imData)
 [IDX nn] = kmeans(imData,4);
 imIDX=reshape(IDX,size(a));
 imshow(imIDX==1,[]);
+
+
+
+
 
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
@@ -218,6 +230,7 @@ function btnLeft_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 
 a=rgb2gray(rightPhoto);
+
 imshow(a)
 imData=reshape(a,[],1);
 imData=double(imData)
@@ -245,16 +258,16 @@ function selectImgBrowser_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global imageBrowser; 
 global imageBrowserSize;
-cla(handles.imageBrowser,'reset');
+cla(handles.photoRight,'reset');
 % set(handles.dotsText, 'String', '');
 % set(handles.linesText, 'String', '');
 % set(handles.effusionText, 'String', '');
 
 path=uigetfile('*.jpg');
-imageBrowser=imread(path);
-imageBrowserSize = size(imageBrowser);
-set(handles.imageBrowser,'Units','pixels');
-resizePos = get(handles.imageBrowser,'Position');
-imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
-axes(handles.imageBrowser);
-imshow(imageBrowser);
+rightPhoto=imread(path);
+rightPhotoSize = size(rightPhoto);
+set(handles.photoRight,'Units','pixels');
+resizePos = get(handles.photoRight,'Position');
+rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
+axes(handles.photoRight);
+imshow(rightPhoto);
