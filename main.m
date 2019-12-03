@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 03-Dec-2019 08:34:20
+% Last Modified by GUIDE v2.5 03-Dec-2019 10:31:58
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -95,7 +95,23 @@ function linesStart_Callback(hObject, eventdata, handles)
 % hObject    handle to linesStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+stop=0;
+value=get(handles.linesStart,'string');
+if(strcmp(value,'Stop'))
+    set(handles.linesStart,'string','Linie');
+    stop=1;
+end
+if(strcmp(value,'Linie'))
+    set(handles.linesStart,'string','Stop');
+end
 
+while(stop==0)
+M = imfreehand(gca,'Closed',0);
+lines= sum(M.createMask);
+lines=lines + sum(lines);
+ set(handles.linesText, 'String', num2str(lines));
+ stop = handles.stop;
+end
 % --- Executes on button press in linesSave.
 function linesSave_Callback(hObject, eventdata, handles)
 % hObject    handle to linesSave (see GCBO)
@@ -258,3 +274,14 @@ resizePos = get(handles.imageBrowser,'Position');
 imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
 axes(handles.imageBrowser);
 imshow(imageBrowser);
+
+
+% --- Executes on button press in linesStop.
+function linesStop_Callback(hObject, eventdata, handles)
+% hObject    handle to linesStop (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+stop=1;
+handles.stop = stop;
+
+guidata(hObject, handles);
