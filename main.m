@@ -73,16 +73,26 @@ global stopState;
 global x;
 global y;
 numDotsClicked = 0;
-stopState = 0;
 dotsCount = 0;
-while ~stopState 
+stopDots=0;
+
+value=get(handles.dotsStart,'string');
+if(strcmp(value,'Stop'))
+    set(handles.dotsStart,'string','Kropki');
+    stopDots=1;
+end
+if(strcmp(value,'Kropki'))
+    set(handles.dotsStart,'string','Stop');
+end
+
+while(stopDots==0)
   numDotsClicked = numDotsClicked + 1;
   [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
   hold(handles.photoLeft,'on');
   dotsCount = dotsCount + 1;
   set(handles.dotsText, 'String', dotsCount);
   drawnow;
-  plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 15);
+  plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
 end
 
 function dotSave_Callback(hObject, eventdata, handles)
@@ -90,11 +100,7 @@ global leftPhoto;
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
-% --- Executes on button press in linesStart.
 function linesStart_Callback(hObject, eventdata, handles)
-% hObject    handle to linesStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 stop=0;
 value=get(handles.linesStart,'string');
 if(strcmp(value,'Stop'))
@@ -109,9 +115,10 @@ while(stop==0)
 M = imfreehand(gca,'Closed',0);
 lines= sum(M.createMask);
 lines=lines + sum(lines);
-set(handles.linesText, 'String', num2str(lines));
+ set(handles.linesText, 'String', num2str(lines));
+
 end
-% --- Executes on button press in linesSave.
+
 function linesSave_Callback(hObject, eventdata, handles)
 % hObject    handle to linesSave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -212,18 +219,10 @@ imData=double(imData)
 imIDX=reshape(IDX,size(a));
 imshow(imIDX==1,[]);
 
-
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
 answer = inputdlg('Podaj nazw pliku','Nazwa pliku', [1 50]);
 imwrite(Image.cdata, strcat(answer,'.jpg'));
-
-function dotsStop_Callback(hObject, eventdata, handles)
-global stopState;
-stopState = 1;
-guidata(hObject, handles);
-
-
 
 % --- Executes on button press in btnLeft.
 function btnLeft_Callback(hObject, eventdata, handles)
@@ -242,7 +241,6 @@ for i = 1:4
   imshow(imIDX==i,[]);
 
 end
-
 
 % --- Executes during object creation, after setting all properties.
 function imageBrowser_CreateFcn(hObject, eventdata, handles)
@@ -273,14 +271,3 @@ resizePos = get(handles.imageBrowser,'Position');
 imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
 axes(handles.imageBrowser);
 imshow(imageBrowser);
-
-
-% --- Executes on button press in linesStop.
-function linesStop_Callback(hObject, eventdata, handles)
-% hObject    handle to linesStop (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-stop=1;
-handles.stop = stop;
-
-guidata(hObject, handles);
