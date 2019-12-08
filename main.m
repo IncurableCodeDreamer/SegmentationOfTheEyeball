@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 03-Dec-2019 10:31:58
+% Last Modified by GUIDE v2.5 08-Dec-2019 06:35:00
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -37,7 +37,6 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
 
 % --- Executes just before main is made visible.
 function main_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -55,47 +54,10 @@ guidata(hObject, handles);
 % UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-% --- Outputs from this function are returned to the command line.
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Get default command line output from handles structure
 varargout{1} = handles.output;
 clc;
 clear all;
-
-function dotsStart_Callback(hObject, eventdata, handles)
-global stopDots;
-numDotsClicked = 0;
-dotsCount = 0;
-
-value = get(handles.dotsStart,'string');
-    if(strcmp(value,'Kropki'))
-        stopDots = 0;
-        set(handles.dotsStart,'string','Stop');
-    elseif(strcmp(value,'Stop'))
-        stopDots = 1;
-        set(handles.dotsStart,'string','Kropki');
-    end
-
-while ~stopDots
-  disp('petla');
-  numDotsClicked = numDotsClicked + 1;
-  [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
-  hold(handles.photoLeft,'on');
-  dotsCount = dotsCount + 1;
-  set(handles.dotsText, 'String', dotsCount);
-  plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
-  handles.numDotsClicked = numDotsClicked - 1;
-  handles.dotsArray = [x,y];
-end
-
-disp('koniec');
-set(handles.dotsText, 'String', dotsCount-1);
-guidata(hObject, handles);
 
 function dotSave_Callback(hObject, eventdata, handles)
 global leftPhoto; 
@@ -120,66 +82,62 @@ lines=lines + sum(lines);
  set(handles.linesText, 'String', num2str(lines));
 end
 
-function linesSave_Callback(hObject, eventdata, handles)
-% hObject    handle to linesSave (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% --- Executes on button press in effusionStart.
 function effusionStart_Callback(hObject, eventdata, handles)
-% hObject    handle to effusionStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
     activeWindow = handles.photoLeft;
     handleMask = imfreehand(activeWindow)
     mask = createMask(handleMask);
     area=regionprops(double(mask),'Area')
     set(handles.effusionText, 'String', num2str(area.Area));
-  
-% --- Executes on button press in effusionSave.
-function effusionSave_Callback(hObject, eventdata, handles)
-% hObject    handle to effusionSave (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% --- Executes on button press in show.
 function show_Callback(hObject, eventdata, handles)
-% hObject    handle to show (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-function dotsCheckbox_Callback(hObject, eventdata, handles)
 global numDotsClicked;
-global data;
-% g/lobal y;
-disp('bfdvsbrgsd');
-numDotsClicked = handles.numDotsClicked
-data = handles.dotsArray
+global dataDotsX;
+global dataDotsY;
+global IsDotsCheckbox;
+global IsEffusionCheckbox;
+global IsLinesCheckbox;
+IsDotsCheckbox = handles.IsDotsCheckbox;
+IsLinesCheckbox = handles.IsLinesCheckbox;
+IsEffusionCheckbox = handles.IsEffusionCheckbox;
 
-disp('bbbbb');
-% numDotsClicked
-% y 
-% x
-% [x y]
-for i=0:numDotsClicked
-   hold(handles.photoLeft,'on');
-   hold on;
-   plot(a(numDotsClicked), b(numDotsClicked), 'yo', 'MarkerSize', 10)
+if(IsDotsCheckbox)
+    numDotsClicked = handles.numDotsClicked;
+    dataDotsX = handles.dotsArrayX;
+    dataDotsY = handles.dotsArrayY;  
+    dataDotsX(:, end)=[];
+    dataDotsY(:, end)=[];
+
+    for i=1:(numDotsClicked)
+        hold(handles.photoLeft,'on');
+        plot(dataDotsX(i), dataDotsY(i), 'yo', 'MarkerSize', 10);
+        hold on;
+    end
+    hold(handles.photoLeft,'off');
 end
 
-% --- Executes on button press in linesCheckbox.
-function linesCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to linesCheckbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Hint: get(hObject,'Value') returns toggle state of linesCheckbox
+if(IsLinesCheckbox)
+end
 
-% --- Executes on button press in effusionCheckbox.
+if(IsEffusionCheckbox)
+end
+
+function dotsCheckbox_Callback(hObject, eventdata, handles)
+global IsDotsCheckbox;
+IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
+handles.IsDotsCheckbox = IsDotsCheckbox;
+guidata(hObject, handles);
+
+function linesCheckbox_Callback(hObject, eventdata, handles)
+global IsLinesCheckbox;
+IsLinesCheckbox = get(handles.linesCheckbox, 'value');
+handles.IsLinesCheckbox = IsLinesCheckbox;
+guidata(hObject, handles);
+
 function effusionCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to effusionCheckbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Hint: get(hObject,'Value') returns toggle state of effusionCheckbox
+global IsEffusionCheckbox;
+IsEffusionCheckbox = get(handles.effusionCheckbox, 'value');
+handles.IsEffusionCheckbox = IsEffusionCheckbox;
+guidata(hObject, handles);
 
 function selectPhotoLeft_Callback(hObject, eventdata, handles)
 global leftPhoto; 
@@ -189,7 +147,7 @@ set(handles.dotsText, 'String', '');
 set(handles.linesText, 'String', '');
 set(handles.effusionText, 'String', '');
 
-path=uigetfile('*.jpg');
+path=uigetfile('*.tif');
 leftPhoto=imread(path);
 leftPhotoSize = size(leftPhoto);
 set(handles.photoLeft,'Units','pixels');
@@ -200,17 +158,18 @@ imshow(leftPhoto);
 
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
-imwrite(Image.cdata, 'mask_image_L.jpg');
+answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
+
+value = char(answer);
+ext= char('.jpg');
+imwrite(Image.cdata, strcat(value,ext));
 
 function selectPhotoRight_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 global rightPhotoSize;
 cla(handles.photoRight,'reset');
-% set(handles.dotsText, 'String', '');
-% set(handles.linesText, 'String', '');
-% set(handles.effusionText, 'String', '');
 
-path=uigetfile('*.jpg');
+path=uigetfile('*.tif');
 rightPhoto=imread(path);
 rightPhotoSize = size(rightPhoto);
 set(handles.photoRight,'Units','pixels');
@@ -229,49 +188,32 @@ imshow(imIDX==1,[]);
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
-answer = inputdlg('Podaj nazw pliku','Nazwa pliku', [1 50]);
-imwrite(Image.cdata, strcat(answer,'.jpg'));
+answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
 
-% --- Executes on button press in btnLeft.
+value = char(answer);
+ext= char('.jpg');
+imwrite(Image.cdata, strcat(value,ext));
+
 function btnLeft_Callback(hObject, eventdata, handles)
-% hObject    handle to btnLeft (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 global rightPhoto; 
 
 a=rgb2gray(rightPhoto);
-imshow(a)
+axes(handles.photoRight);
+imshow(a);
 imData=reshape(a,[],1);
-imData=double(imData)
+imData=double(imData);
 [IDX nn] = kmeans(imData,4);
 imIDX=reshape(IDX,size(a));
 for i = 1:4
   imshow(imIDX==i,[]);
-
 end
 
-% --- Executes during object creation, after setting all properties.
-function imageBrowser_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to imageBrowser (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: place code in OpeningFcn to populate imageBrowser
-
-
-% --- Executes on button press in selectImgBrowser.
 function selectImgBrowser_Callback(hObject, eventdata, handles)
-% hObject    handle to selectImgBrowser (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 global imageBrowser; 
 global imageBrowserSize;
 cla(handles.imageBrowser,'reset');
-% set(handles.dotsText, 'String', '');
-% set(handles.linesText, 'String', '');
-% set(handles.effusionText, 'String', '');
 
-path=uigetfile('*.jpg');
+path=uigetfile('*.tif');
 imageBrowser=imread(path);
 imageBrowserSize = size(imageBrowser);
 set(handles.imageBrowser,'Units','pixels');
@@ -279,3 +221,33 @@ resizePos = get(handles.imageBrowser,'Position');
 imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
 axes(handles.imageBrowser);
 imshow(imageBrowser);
+
+function clearBtn_Callback(hObject, eventdata, handles)
+handles.numDotsClicked = [];
+handles.dotsArray = [];
+guidata(hObject, handles);
+
+function togglebuttonDots_Callback(hObject, eventdata, handles)
+numDotsClicked = 1;
+dotsCount = 1;
+set(handles.togglebuttonDots,'string','Mikrotetniaki');
+
+ while get(hObject,'Value')
+   pause(1);
+   if(get(hObject,'Value'))
+   set(handles.togglebuttonDots,'string','Stop');
+   [x(numDotsClicked), y(numDotsClicked)] = ginput(1)
+   set(handles.dotsText, 'String', dotsCount);
+   hold(handles.photoLeft,'on');
+   plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
+   handles.dotsArrayX = x;
+   handles.dotsArrayY = y;
+   dotsCount = dotsCount + 1;
+   numDotsClicked = numDotsClicked + 1;
+   end
+ end
+
+set(handles.dotsText, 'String', dotsCount-2);
+handles.numDotsClicked = numDotsClicked - 2;
+hold(handles.photoLeft, 'off');
+guidata(hObject, handles);
