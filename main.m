@@ -70,13 +70,20 @@ count=0;
 if(~isempty(str))
   count=str2num(str);  
 else
-handles.maskLines=[];
+photo=handles.photoLeft;
+xSize=abs(photo.XLim(2)-photo.XLim(1));
+ySize=abs(photo.YLim(2)-photo.YLim(1));
+handles.maskLines=zeros(xSize,ySize);
 end
 M = imfreehand(gca,'Closed',0);
 lines= M.createMask;
 maskLogical=logical(lines);
+handlesMask=handles.maskLines;
+handlesMask = handlesMask + maskLogical;
+handles.maskLines=logical(handlesMask);
 count= count + sum(maskLogical(:));
- set(handles.linesText, 'String', num2str(count));
+set(handles.linesText, 'String', num2str(count));
+guidata(hObject, handles);
 
 
 function effusionStart_Callback(hObject, eventdata, handles)
