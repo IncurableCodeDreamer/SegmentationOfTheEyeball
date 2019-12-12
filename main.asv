@@ -75,7 +75,7 @@ end
 M = imfreehand(gca,'Closed',0);
 lines= M.createMask;
 maskLogical=logical(lines);
-count= count + sum(maskLogical(:));
+count= count + sum(lines(:));
  set(handles.linesText, 'String', num2str(count));
 
 
