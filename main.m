@@ -100,9 +100,9 @@ global dataDotsY;
 global IsDotsCheckbox;
 global IsEffusionCheckbox;
 global IsLinesCheckbox;
-IsDotsCheckbox = handles.IsDotsCheckbox;
-IsLinesCheckbox = handles.IsLinesCheckbox;
-IsEffusionCheckbox = handles.IsEffusionCheckbox;
+IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
+IsLinesCheckbox = get(handles.linesCheckbox, 'value')
+IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
 
 if(IsDotsCheckbox)
     numDotsClicked = handles.numDotsClicked;
@@ -120,6 +120,10 @@ if(IsDotsCheckbox)
 end
 
 if(IsLinesCheckbox)
+    photo=handles.photoLeft;
+    mask=handles.maskLines;
+    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
+    imshow(z, 'Parent', handles.photoLeft);
 end
 
 if(IsEffusionCheckbox)
@@ -229,6 +233,8 @@ imshow(imageBrowser);
 function clearBtn_Callback(hObject, eventdata, handles)
 handles.numDotsClicked = [];
 handles.dotsArray = [];
+handles.maskLines=[];
+set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)

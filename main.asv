@@ -70,15 +70,20 @@ count=0;
 if(~isempty(str))
   count=str2num(str);  
 else
-handles.maskLines=[];
+photo=handles.photoLeft;
+xSize=abs(photo.XLim(2)-photo.XLim(1));
+ySize=abs(photo.YLim(2)-photo.YLim(1));
+handles.maskLines=zeros(xSize,ySize);
 end
 M = imfreehand(gca,'Closed',0);
 lines= M.createMask;
 maskLogical=logical(lines);
-handlesmask=handles.maskLines;
-
+handlesMask=handles.maskLines;
+handlesMask = handlesMask + maskLogical;
+handles.maskLines=logical(handlesMask);
 count= count + sum(maskLogical(:));
- set(handles.linesText, 'String', num2str(count));
+set(handles.linesText, 'String', num2str(count));
+guidata(hObject, handles);
 
 
 function effusionStart_Callback(hObject, eventdata, handles)
@@ -115,6 +120,9 @@ if(IsDotsCheckbox)
 end
 
 if(IsLinesCheckbox)
+    handlesMask=handles.maskLines;
+    z = wljoin(img, mask, [0.5 1 0.5], 'be');
+    imshow(z, 'Parent', handles.axes2);
 end
 
 if(IsEffusionCheckbox)
@@ -224,6 +232,8 @@ imshow(imageBrowser);
 function clearBtn_Callback(hObject, eventdata, handles)
 handles.numDotsClicked = [];
 handles.dotsArray = [];
+handles.maskLines=[];
+set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)
