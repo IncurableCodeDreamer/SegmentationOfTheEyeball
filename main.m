@@ -186,12 +186,10 @@ rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
 imshow(rightPhoto);
  
-a=rgb2gray(rightPhoto);
-imshow(a)
-imData=reshape(a,[],1);
+imData=reshape(rightPhoto,[],1);
 imData=double(imData)
 [IDX nn] = kmeans(imData,4);
-imIDX=reshape(IDX,size(a));
+imIDX=reshape(IDX,size(rightPhoto));
 imshow(imIDX==1,[]);
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
@@ -205,13 +203,12 @@ imwrite(Image.cdata, strcat(value,ext));
 function btnLeft_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 
-a=rgb2gray(rightPhoto);
 axes(handles.photoRight);
-imshow(a);
-imData=reshape(a,[],1);
+imshow(rightPhoto);
+imData=reshape(rightPhoto,[],1);
 imData=double(imData);
 [IDX nn] = kmeans(imData,4);
-imIDX=reshape(IDX,size(a));
+imIDX=reshape(IDX,size(rightPhoto));
 for i = 1:4
   imshow(imIDX==i,[]);
 end
