@@ -87,11 +87,23 @@ guidata(hObject, handles);
 
 
 function effusionStart_Callback(hObject, eventdata, handles)
-    activeWindow = handles.photoLeft;
-    handleMask = imfreehand(activeWindow)
-    mask = createMask(handleMask);
-    area=regionprops(double(mask),'Area')
-    set(handles.effusionText, 'String', num2str(area.Area));
+global leftPhoto; 
+lp = leftPhoto
+activeWindow = handles.photoLeft;
+handleMask = imfreehand(activeWindow)  
+mask = createMask(handleMask);
+xy = int32(handleMask.getPosition);
+mask = false(size(lp));
+linearIndexes = sub2ind(size(lp), xy(:, 2), xy(:, 1));
+mask(linearIndexes) = true;
+lp(linearIndexes) = 255;
+    
+area=regionprops(double(mask),'Area')
+set(handles.effusionText, 'String', num2str(area.Area));
+
+handles.effusion = lp
+guidata(hObject, handles);
+
 
 function show_Callback(hObject, eventdata, handles)
 global numDotsClicked;
@@ -100,6 +112,7 @@ global dataDotsY;
 global IsDotsCheckbox;
 global IsEffusionCheckbox;
 global IsLinesCheckbox;
+global effusion;
 IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
 IsLinesCheckbox = get(handles.linesCheckbox, 'value')
 IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
@@ -127,6 +140,9 @@ if(IsLinesCheckbox)
 end
 
 if(IsEffusionCheckbox)
+        photo=handles.photoLeft;
+        effusion = handles.effusion
+        imshow(effusion, 'Parent', photo);
 end
 
 function dotsCheckbox_Callback(hObject, eventdata, handles)
@@ -163,6 +179,8 @@ resizePos = get(handles.photoLeft,'Position');
 leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
+
+
 
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);

@@ -87,11 +87,23 @@ guidata(hObject, handles);
 
 
 function effusionStart_Callback(hObject, eventdata, handles)
-    activeWindow = handles.photoLeft;
-    handleMask = imfreehand(activeWindow)
-    mask = createMask(handleMask);
-    area=regionprops(double(mask),'Area')
-    set(handles.effusionText, 'String', num2str(area.Area));
+global leftPhoto; 
+lp = leftPhoto
+activeWindow = handles.photoLeft;
+handleMask = imfreehand(activeWindow)  
+mask = createMask(handleMask);
+xy = int32(handleMask.getPosition);
+mask = false(size(lp));
+linearIndexes = sub2ind(size(lp), xy(:, 2), xy(:, 1));
+mask(linearIndexes) = true;
+lp(linearIndexes) = 255;
+    
+area=regionprops(double(mask),'Area')
+set(handles.effusionText, 'String', num2str(area.Area));
+
+handles.effusion = lp
+guidata(hObject, handles);
+
 
 function show_Callback(hObject, eventdata, handles)
 global numDotsClicked;
@@ -100,9 +112,10 @@ global dataDotsY;
 global IsDotsCheckbox;
 global IsEffusionCheckbox;
 global IsLinesCheckbox;
-IsDotsCheckbox = handles.IsDotsCheckbox;
-IsLinesCheckbox = handles.IsLinesCheckbox;
-IsEffusionCheckbox = handles.IsEffusionCheckbox;
+global effusion;
+IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
+IsLinesCheckbox = get(handles.linesCheckbox, 'value')
+IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
 
 if(IsDotsCheckbox)
     numDotsClicked = handles.numDotsClicked;
@@ -120,12 +133,16 @@ if(IsDotsCheckbox)
 end
 
 if(IsLinesCheckbox)
-    handlesMask=handles.maskLines;
-    z = wljoin(img, mask, [0.5 1 0.5], 'be');
-    imshow(z, 'Parent', handles.axes2);
+    photo=handles.photoLeft;
+    mask=handles.maskLines;
+    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
+    imshow(z, 'Parent', handles.photoLeft);
 end
 
 if(IsEffusionCheckbox)
+        photo=handles.photoLeft;
+        effusion = handles.effusion
+imshow(effusion, 'Parent', photo);
 end
 
 function dotsCheckbox_Callback(hObject, eventdata, handles)
@@ -163,6 +180,8 @@ leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
+
+
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
@@ -185,12 +204,10 @@ rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
 imshow(rightPhoto);
  
-a=rgb2gray(rightPhoto);
-imshow(a)
-imData=reshape(a,[],1);
+imData=reshape(rightPhoto,[],1);
 imData=double(imData)
 [IDX nn] = kmeans(imData,4);
-imIDX=reshape(IDX,size(a));
+imIDX=reshape(IDX,size(rightPhoto));
 imshow(imIDX==1,[]);
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
@@ -204,13 +221,12 @@ imwrite(Image.cdata, strcat(value,ext));
 function btnLeft_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 
-a=rgb2gray(rightPhoto);
 axes(handles.photoRight);
-imshow(a);
-imData=reshape(a,[],1);
+imshow(rightPhoto);
+imData=reshape(rightPhoto,[],1);
 imData=double(imData);
 [IDX nn] = kmeans(imData,4);
-imIDX=reshape(IDX,size(a));
+imIDX=reshape(IDX,size(rightPhoto));
 for i = 1:4
   imshow(imIDX==i,[]);
 end
