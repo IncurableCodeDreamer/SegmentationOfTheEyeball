@@ -65,6 +65,7 @@ axes(handles.photoLeft);
 imshow(leftPhoto);
 
 function linesStart_Callback(hObject, eventdata, handles)
+set(handles.linesText, 'String', num2str(count));
 str= get(handles.linesText, 'String');
 count=0;
 if(~isempty(str))
@@ -142,7 +143,7 @@ end
 if(IsEffusionCheckbox)
         photo=handles.photoLeft;
         effusion = handles.effusion
-imshow(effusion, 'Parent', photo);
+        imshow(effusion, 'Parent', photo);
 end
 
 function dotsCheckbox_Callback(hObject, eventdata, handles)

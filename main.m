@@ -60,11 +60,13 @@ clc;
 clear all;
 
 function dotSave_Callback(hObject, eventdata, handles)
+set(handles.chosenFcnLabel, 'String', '');
 global leftPhoto; 
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
 function linesStart_Callback(hObject, eventdata, handles)
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyñ');
 str= get(handles.linesText, 'String');
 count=0;
 if(~isempty(str))
@@ -87,6 +89,7 @@ guidata(hObject, handles);
 
 
 function effusionStart_Callback(hObject, eventdata, handles)
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wycieków');
 global leftPhoto; 
 lp = leftPhoto
 activeWindow = handles.photoLeft;
@@ -117,6 +120,19 @@ IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
 IsLinesCheckbox = get(handles.linesCheckbox, 'value')
 IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
 
+if(IsLinesCheckbox)
+    photo=handles.photoLeft;
+    mask=handles.maskLines;
+    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
+    imshow(z, 'Parent', handles.photoLeft);
+end
+
+if(IsEffusionCheckbox)
+        photo=handles.photoLeft;
+        effusion = handles.effusion
+        imshow(effusion, 'Parent', photo);
+end
+
 if(IsDotsCheckbox)
     numDotsClicked = handles.numDotsClicked;
     dataDotsX = handles.dotsArrayX;
@@ -130,19 +146,6 @@ if(IsDotsCheckbox)
         hold on;
     end
     hold(handles.photoLeft,'off');
-end
-
-if(IsLinesCheckbox)
-    photo=handles.photoLeft;
-    mask=handles.maskLines;
-    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
-    imshow(z, 'Parent', handles.photoLeft);
-end
-
-if(IsEffusionCheckbox)
-        photo=handles.photoLeft;
-        effusion = handles.effusion
-        imshow(effusion, 'Parent', photo);
 end
 
 function dotsCheckbox_Callback(hObject, eventdata, handles)
@@ -253,6 +256,7 @@ set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrotêtniaków');
 numDotsClicked = 1;
 dotsCount = 1;
 set(handles.togglebuttonDots,'string','Mikrotetniaki');
