@@ -124,8 +124,14 @@ IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
 IsLinesCheckbox = get(handles.linesCheckbox, 'value')
 IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
 
+
+if(IsEffusionCheckbox)
+        photo=handles.photoLeft;
+        effusion = handles.effusion
+        imshow(effusion, 'Parent', photo);
+end
+
 if(IsLinesCheckbox)
-    photo=handles.photoLeft;
     xy=handles.xyNum;
     [X,Y]=size(xy);
        for j=1:X
@@ -134,12 +140,6 @@ if(IsLinesCheckbox)
         hold on;
        end
     hold(handles.photoLeft,'off');
-end
-
-if(IsEffusionCheckbox)
-        photo=handles.photoLeft;
-        effusion = handles.effusion
-        imshow(effusion, 'Parent', photo);
 end
 
 if(IsDotsCheckbox)
@@ -261,6 +261,7 @@ function clearBtn_Callback(hObject, eventdata, handles)
 handles.numDotsClicked = [];
 handles.dotsArray = [];
 handles.maskLines=[];
+handles.xyNum=[];
 set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
