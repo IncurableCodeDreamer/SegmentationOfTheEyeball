@@ -126,14 +126,13 @@ IsEffusionCheckbox = get(handles.effusionCheckbox, 'value');
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
-
-if(IsEffusionCheckbox)
+if(IsEffusionCheckbox && isfield(handles,'effusion'))
         photo=handles.photoLeft;
         effusion = handles.effusion;
         imshow(effusion, 'Parent', photo);
 end
 
-if(IsLinesCheckbox)
+if(IsLinesCheckbox && isfield(handles,'xyNum'))
     xy=handles.xyNum;
     [X,Y]=size(xy);
        for j=1:X
@@ -144,7 +143,7 @@ if(IsLinesCheckbox)
     hold(handles.photoLeft,'off');
 end
 
-if(IsDotsCheckbox)
+if(IsDotsCheckbox && isfield(handles,'numDotsClicked'))
     numDotsClicked = handles.numDotsClicked;
     dataDotsX = handles.dotsArrayX;
     dataDotsY = handles.dotsArrayY;  
