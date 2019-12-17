@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 08-Dec-2019 06:35:00
+% Last Modified by GUIDE v2.5 16-Dec-2019 15:57:46
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -52,7 +52,7 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 % UIWAIT makes main wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.figure1);
 
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
@@ -66,7 +66,7 @@ axes(handles.photoLeft);
 imshow(leftPhoto);
 
 function linesStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyñ');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczy?');
 str= get(handles.linesText, 'String');
 count=0;
 if(~isempty(str))
@@ -87,13 +87,12 @@ count= count + sum(maskLogical(:));
 set(handles.linesText, 'String', num2str(count));
 guidata(hObject, handles);
 
-
 function effusionStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wycieków');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wyciek?w');
 global leftPhoto; 
-lp = leftPhoto
+lp = leftPhoto;
 activeWindow = handles.photoLeft;
-handleMask = imfreehand(activeWindow)  
+handleMask = imfreehand(activeWindow); 
 mask = createMask(handleMask);
 xy = int32(handleMask.getPosition);
 mask = false(size(lp));
@@ -101,12 +100,11 @@ linearIndexes = sub2ind(size(lp), xy(:, 2), xy(:, 1));
 mask(linearIndexes) = true;
 lp(linearIndexes) = 255;
     
-area=regionprops(double(mask),'Area')
+area=regionprops(double(mask),'Area');
 set(handles.effusionText, 'String', num2str(area.Area));
 
-handles.effusion = lp
+handles.effusion = lp;
 guidata(hObject, handles);
-
 
 function show_Callback(hObject, eventdata, handles)
 global numDotsClicked;
@@ -116,9 +114,13 @@ global IsDotsCheckbox;
 global IsEffusionCheckbox;
 global IsLinesCheckbox;
 global effusion;
+global leftPhoto; 
 IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
-IsLinesCheckbox = get(handles.linesCheckbox, 'value')
-IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
+IsLinesCheckbox = get(handles.linesCheckbox, 'value');
+IsEffusionCheckbox = get(handles.effusionCheckbox, 'value');
+
+axes(handles.photoLeft);
+imshow(leftPhoto);
 
 if(IsLinesCheckbox)
     photo=handles.photoLeft;
@@ -129,7 +131,7 @@ end
 
 if(IsEffusionCheckbox)
         photo=handles.photoLeft;
-        effusion = handles.effusion
+        effusion = handles.effusion;
         imshow(effusion, 'Parent', photo);
 end
 
@@ -183,14 +185,12 @@ leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
-
-
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
 
 value = char(answer);
-ext= char('.jpg');
+ext= char('.tif');
 imwrite(Image.cdata, strcat(value,ext));
 
 function selectPhotoRight_Callback(hObject, eventdata, handles)
@@ -208,7 +208,7 @@ axes(handles.photoRight);
 imshow(rightPhoto);
  
 imData=reshape(rightPhoto,[],1);
-imData=double(imData)
+imData=double(imData);
 [IDX nn] = kmeans(imData,4);
 imIDX=reshape(IDX,size(rightPhoto));
 imshow(imIDX==1,[]);
@@ -218,7 +218,7 @@ Image = getframe(handles.photoRight);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
 
 value = char(answer);
-ext= char('.jpg');
+ext= char('.tif');
 imwrite(Image.cdata, strcat(value,ext));
 
 function btnLeft_Callback(hObject, eventdata, handles)
@@ -256,7 +256,7 @@ set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrotêtniaków');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrot?tniak?w');
 numDotsClicked = 1;
 dotsCount = 1;
 set(handles.togglebuttonDots,'string','Mikrotetniaki');
@@ -265,7 +265,7 @@ set(handles.togglebuttonDots,'string','Mikrotetniaki');
    pause(1);
    if(get(hObject,'Value'))
    set(handles.togglebuttonDots,'string','Stop');
-   [x(numDotsClicked), y(numDotsClicked)] = ginput(1)
+   [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
    set(handles.dotsText, 'String', dotsCount);
    hold(handles.photoLeft,'on');
    plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
@@ -276,7 +276,10 @@ set(handles.togglebuttonDots,'string','Mikrotetniaki');
    end
  end
 
-set(handles.dotsText, 'String', dotsCount-2);
+dotsCount = dotsCount - 2;
 handles.numDotsClicked = numDotsClicked - 2;
+set(handles.dotsText, 'String', dotsCount);
 hold(handles.photoLeft, 'off');
 guidata(hObject, handles);
+
+function imageBrowser_CreateFcn(hObject, eventdata, handles)
