@@ -130,7 +130,7 @@ if(IsLinesCheckbox)
     [X,Y]=size(xy);
        for j=1:X
         hold(handles.photoLeft,'on');
-        plot(xy(1,j), xy(2,j), 'r');
+        plot(xy(j,1), xy(j,2), 'ro','MarkerSize',2);
         hold on;
        end
     hold(handles.photoLeft,'off');
