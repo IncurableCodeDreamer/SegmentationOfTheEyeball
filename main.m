@@ -69,8 +69,10 @@ function linesStart_Callback(hObject, eventdata, handles)
 set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyñ');
 str= get(handles.linesText, 'String');
 count=0;
+xy=[];
 if(~isempty(str))
-  count=str2num(str);  
+  count=str2num(str); 
+  xy=handles.xyNum;
 else
 photo=handles.photoLeft;
 xSize=abs(photo.XLim(2)-photo.XLim(1));
@@ -84,6 +86,8 @@ handlesMask=handles.maskLines;
 handlesMask = handlesMask + maskLogical;
 handles.maskLines=logical(handlesMask);
 count= count + sum(maskLogical(:));
+xy = [xy;int32(M.getPosition)];
+handles.xyNum=xy;
 set(handles.linesText, 'String', num2str(count));
 guidata(hObject, handles);
 
@@ -122,9 +126,14 @@ IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
 
 if(IsLinesCheckbox)
     photo=handles.photoLeft;
-    mask=handles.maskLines;
-    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
-    imshow(z, 'Parent', handles.photoLeft);
+    xy=handles.xyNum;
+    [X,Y]=size(xy);
+       for j=1:X
+        hold(handles.photoLeft,'on');
+        plot(xy(1,j), xy(2,j), 'r');
+        hold on;
+       end
+    hold(handles.photoLeft,'off');
 end
 
 if(IsEffusionCheckbox)
