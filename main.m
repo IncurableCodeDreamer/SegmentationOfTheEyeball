@@ -69,8 +69,10 @@ function linesStart_Callback(hObject, eventdata, handles)
 set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczy?');
 str= get(handles.linesText, 'String');
 count=0;
+xy=[];
 if(~isempty(str))
-  count=str2num(str);  
+  count=str2num(str); 
+  xy=handles.xyNum;
 else
 photo=handles.photoLeft;
 xSize=abs(photo.XLim(2)-photo.XLim(1));
@@ -84,6 +86,8 @@ handlesMask=handles.maskLines;
 handlesMask = handlesMask + maskLogical;
 handles.maskLines=logical(handlesMask);
 count= count + sum(maskLogical(:));
+xy = [xy;int32(M.getPosition)];
+handles.xyNum=xy;
 set(handles.linesText, 'String', num2str(count));
 guidata(hObject, handles);
 
@@ -122,17 +126,22 @@ IsEffusionCheckbox = get(handles.effusionCheckbox, 'value');
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
-if(IsLinesCheckbox)
-    photo=handles.photoLeft;
-    mask=handles.maskLines;
-    z = wljoinm(photo, mask, [0.5 1 0.5], 'be');
-    imshow(z, 'Parent', handles.photoLeft);
-end
 
 if(IsEffusionCheckbox)
         photo=handles.photoLeft;
         effusion = handles.effusion;
         imshow(effusion, 'Parent', photo);
+end
+
+if(IsLinesCheckbox)
+    xy=handles.xyNum;
+    [X,Y]=size(xy);
+       for j=1:X
+        hold(handles.photoLeft,'on');
+        plot(xy(j,1), xy(j,2), 'ro','MarkerSize',2);
+        hold on;
+       end
+    hold(handles.photoLeft,'off');
 end
 
 if(IsDotsCheckbox)
@@ -252,6 +261,7 @@ function clearBtn_Callback(hObject, eventdata, handles)
 handles.numDotsClicked = [];
 handles.dotsArray = [];
 handles.maskLines=[];
+handles.xyNum=[];
 set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
