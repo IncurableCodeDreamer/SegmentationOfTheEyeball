@@ -189,12 +189,10 @@ set(handles.dotsText, 'String', '');
 set(handles.linesText, 'String', '');
 set(handles.effusionText, 'String', '');
 
-path=uigetfile('*.tif');
+path=uigetfile('*.*');
 leftPhoto=imread(path);
 leftPhotoSize = size(leftPhoto);
 set(handles.photoLeft,'Units','pixels');
-resizePos = get(handles.photoLeft,'Position');
-leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
@@ -217,12 +215,10 @@ global rightPhoto;
 global rightPhotoSize;
 cla(handles.photoRight,'reset');
 
-path=uigetfile('*.tif');
+path=uigetfile('*.*');
 rightPhoto=imread(path);
 rightPhotoSize = size(rightPhoto);
 set(handles.photoRight,'Units','pixels');
-resizePos = get(handles.photoRight,'Position');
-rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
 imshow(rightPhoto);
  
@@ -261,12 +257,10 @@ global imageBrowser;
 global imageBrowserSize;
 cla(handles.imageBrowser,'reset');
 
-path=uigetfile('*.tif');
+path=uigetfile('*.*');
 imageBrowser=imread(path);
 imageBrowserSize = size(imageBrowser);
 set(handles.imageBrowser,'Units','pixels');
-resizePos = get(handles.imageBrowser,'Position');
-imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
 axes(handles.imageBrowser);
 imshow(imageBrowser);
 
