@@ -64,6 +64,11 @@ set(handles.chosenFcnLabel, 'String', '');
 global leftPhoto; 
 axes(handles.photoLeft);
 imshow(leftPhoto);
+set(handles.show,'Enable','on');
+set(handles.clearBtn,'Enable','on');
+set(handles.dotsCheckbox,'Enable','on');
+set(handles.linesCheckbox,'Enable','on');
+set(handles.effusionCheckbox,'Enable','on');
 
 function linesStart_Callback(hObject, eventdata, handles)
 set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczy?');
@@ -193,6 +198,12 @@ leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
 imshow(leftPhoto);
 
+set(handles.exportPhotoLeft,'Enable','on');
+set(handles.togglebuttonDots,'Enable','on');
+set(handles.linesStart,'Enable','on');
+set(handles.effusionStart,'Enable','on');
+set(handles.dotSave,'Enable','on');
+
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
@@ -220,6 +231,9 @@ imData=double(imData);
 [IDX nn] = kmeans(imData,4);
 imIDX=reshape(IDX,size(rightPhoto));
 imshow(imIDX==1,[]);
+
+set(handles.exportPhotoRight,'Enable','on');
+set(handles.btnLeft,'Enable','on');
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
