@@ -71,7 +71,7 @@ set(handles.linesCheckbox,'Enable','on');
 set(handles.effusionCheckbox,'Enable','on');
 
 function linesStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczy?');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyn');
 str= get(handles.linesText, 'String');
 count=0;
 xy=[];
@@ -97,7 +97,7 @@ set(handles.linesText, 'String', num2str(count));
 guidata(hObject, handles);
 
 function effusionStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wyciek?w');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wyciekow');
 global leftPhoto; 
 lp = leftPhoto;
 activeWindow = handles.photoLeft;
@@ -194,6 +194,7 @@ leftPhoto=imread(path);
 leftPhotoSize = size(leftPhoto);
 set(handles.photoLeft,'Units','pixels');
 axes(handles.photoLeft);
+leftPhoto = imresize(leftPhoto, 0.5);
 imshow(leftPhoto);
 
 set(handles.exportPhotoLeft,'Enable','on');
@@ -220,6 +221,7 @@ rightPhoto=imread(path);
 rightPhotoSize = size(rightPhoto);
 set(handles.photoRight,'Units','pixels');
 axes(handles.photoRight);
+rightPhoto = imresize(rightPhoto, 0.5);
 imshow(rightPhoto);
  
 imData=reshape(rightPhoto,[],1);
@@ -262,6 +264,7 @@ imageBrowser=imread(path);
 imageBrowserSize = size(imageBrowser);
 set(handles.imageBrowser,'Units','pixels');
 axes(handles.imageBrowser);
+imageBrowser = imresize(imageBrowser, 0.5);
 imshow(imageBrowser);
 
 function clearBtn_Callback(hObject, eventdata, handles)
@@ -273,7 +276,7 @@ set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrot?tniak?w');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrotetniakow');
 numDotsClicked = 1;
 dotsCount = 1;
 set(handles.togglebuttonDots,'string','Mikrotetniaki');
