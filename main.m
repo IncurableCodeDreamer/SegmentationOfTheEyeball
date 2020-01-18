@@ -70,6 +70,7 @@ set(handles.dotsCheckbox,'Enable','on');
 set(handles.linesCheckbox,'Enable','on');
 set(handles.effusionCheckbox,'Enable','on');
 
+
 function linesStart_Callback(hObject, eventdata, handles)
 set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyn');
 str= get(handles.linesText, 'String');
@@ -188,6 +189,7 @@ cla(handles.photoLeft,'reset');
 set(handles.dotsText, 'String', '');
 set(handles.linesText, 'String', '');
 set(handles.effusionText, 'String', '');
+set(handles.photoLeft,'XTick',[], 'YTick', [])
 
 path=uigetfile('*.*');
 leftPhoto=imread(path);
@@ -214,7 +216,9 @@ imwrite(Image.cdata, strcat(value,ext));
 function selectPhotoRight_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 global rightPhotoSize;
+
 cla(handles.photoRight,'reset');
+set(handles.photoRight,'XTick',[], 'YTick', [])
 
 path=uigetfile('*.*');
 rightPhoto=imread(path);
@@ -243,7 +247,8 @@ imwrite(Image.cdata, strcat(value,ext));
 
 function btnLeft_Callback(hObject, eventdata, handles)
 global rightPhoto; 
-
+message = sprintf('Prosze czekac.\nTrwa segmentacja obrazu.');
+uiwait(msgbox(message));
 axes(handles.photoRight);
 imshow(rightPhoto);
 imData=reshape(rightPhoto,[],1);
@@ -258,6 +263,8 @@ function selectImgBrowser_Callback(hObject, eventdata, handles)
 global imageBrowser; 
 global imageBrowserSize;
 cla(handles.imageBrowser,'reset');
+set(handles.imageBrowser,'XTick',[], 'YTick', [])
+
 
 path=uigetfile('*.*');
 imageBrowser=imread(path);

@@ -20,7 +20,7 @@ function varargout = main(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 % Edit the above text to modify the response to help main
-% Last Modified by GUIDE v2.5 08-Dec-2019 06:35:00
+% Last Modified by GUIDE v2.5 16-Dec-2019 15:57:46
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -52,7 +52,7 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 % UIWAIT makes main wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.figure1);
 
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
@@ -64,9 +64,15 @@ set(handles.chosenFcnLabel, 'String', '');
 global leftPhoto; 
 axes(handles.photoLeft);
 imshow(leftPhoto);
+set(handles.show,'Enable','on');
+set(handles.clearBtn,'Enable','on');
+set(handles.dotsCheckbox,'Enable','on');
+set(handles.linesCheckbox,'Enable','on');
+set(handles.effusionCheckbox,'Enable','on');
+
 
 function linesStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyñ');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie naczyn');
 str= get(handles.linesText, 'String');
 count=0;
 xy=[];
@@ -91,13 +97,12 @@ handles.xyNum=xy;
 set(handles.linesText, 'String', num2str(count));
 guidata(hObject, handles);
 
-
 function effusionStart_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wycieków');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie wyciekow');
 global leftPhoto; 
-lp = leftPhoto
+lp = leftPhoto;
 activeWindow = handles.photoLeft;
-handleMask = imfreehand(activeWindow)  
+handleMask = imfreehand(activeWindow); 
 mask = createMask(handleMask);
 xy = int32(handleMask.getPosition);
 mask = false(size(lp));
@@ -105,12 +110,11 @@ linearIndexes = sub2ind(size(lp), xy(:, 2), xy(:, 1));
 mask(linearIndexes) = true;
 lp(linearIndexes) = 255;
     
-area=regionprops(double(mask),'Area')
+area=regionprops(double(mask),'Area');
 set(handles.effusionText, 'String', num2str(area.Area));
 
-handles.effusion = lp
+handles.effusion = lp;
 guidata(hObject, handles);
-
 
 function show_Callback(hObject, eventdata, handles)
 global numDotsClicked;
@@ -120,29 +124,32 @@ global IsDotsCheckbox;
 global IsEffusionCheckbox;
 global IsLinesCheckbox;
 global effusion;
+global leftPhoto; 
 IsDotsCheckbox = get(handles.dotsCheckbox, 'value');
-IsLinesCheckbox = get(handles.linesCheckbox, 'value')
-IsEffusionCheckbox = get(handles.effusionCheckbox, 'value')
+IsLinesCheckbox = get(handles.linesCheckbox, 'value');
+IsEffusionCheckbox = get(handles.effusionCheckbox, 'value');
 
-if(IsLinesCheckbox)
-    photo=handles.photoLeft;
+axes(handles.photoLeft);
+imshow(leftPhoto);
+
+if(IsEffusionCheckbox && isfield(handles,'effusion'))
+        photo=handles.photoLeft;
+        effusion = handles.effusion;
+        imshow(effusion, 'Parent', photo);
+end
+
+if(IsLinesCheckbox && isfield(handles,'xyNum'))
     xy=handles.xyNum;
     [X,Y]=size(xy);
        for j=1:X
         hold(handles.photoLeft,'on');
-        plot(xy(1,j), xy(2,j), 'r', 'MarkerSize', 10);
+        plot(xy(j,1), xy(j,2), 'ro','MarkerSize',2);
         hold on;
        end
     hold(handles.photoLeft,'off');
 end
 
-if(IsEffusionCheckbox)
-        photo=handles.photoLeft;
-        effusion = handles.effusion
-        imshow(effusion, 'Parent', photo);
-end
-
-if(IsDotsCheckbox)
+if(IsDotsCheckbox && isfield(handles,'numDotsClicked'))
     numDotsClicked = handles.numDotsClicked;
     dataDotsX = handles.dotsArrayX;
     dataDotsY = handles.dotsArrayY;  
@@ -182,57 +189,67 @@ cla(handles.photoLeft,'reset');
 set(handles.dotsText, 'String', '');
 set(handles.linesText, 'String', '');
 set(handles.effusionText, 'String', '');
+set(handles.photoLeft,'XTick',[], 'YTick', [])
 
-path=uigetfile('*.tif');
+path=uigetfile('*.*');
 leftPhoto=imread(path);
 leftPhotoSize = size(leftPhoto);
 set(handles.photoLeft,'Units','pixels');
-resizePos = get(handles.photoLeft,'Position');
-leftPhoto= imresize(leftPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoLeft);
+leftPhoto = imresize(leftPhoto, 0.5);
 imshow(leftPhoto);
 
-
+set(handles.exportPhotoLeft,'Enable','on');
+set(handles.togglebuttonDots,'Enable','on');
+set(handles.linesStart,'Enable','on');
+set(handles.effusionStart,'Enable','on');
+set(handles.dotSave,'Enable','on');
 
 function exportPhotoLeft_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoLeft);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
 
 value = char(answer);
-ext= char('.jpg');
+ext= char('.tif');
 imwrite(Image.cdata, strcat(value,ext));
 
 function selectPhotoRight_Callback(hObject, eventdata, handles)
 global rightPhoto; 
 global rightPhotoSize;
-cla(handles.photoRight,'reset');
 
-path=uigetfile('*.tif');
+cla(handles.photoRight,'reset');
+set(handles.photoRight,'XTick',[], 'YTick', [])
+message = sprintf('Left click and hold to begin drawing.\nSimply lift the mouse button to finish');
+uiwait(msgbox(message));
+path=uigetfile('*.*');
 rightPhoto=imread(path);
 rightPhotoSize = size(rightPhoto);
 set(handles.photoRight,'Units','pixels');
-resizePos = get(handles.photoRight,'Position');
-rightPhoto= imresize(rightPhoto, [resizePos(3) resizePos(3)]);
 axes(handles.photoRight);
+rightPhoto = imresize(rightPhoto, 0.5);
 imshow(rightPhoto);
  
 imData=reshape(rightPhoto,[],1);
-imData=double(imData)
+imData=double(imData);
 [IDX nn] = kmeans(imData,4);
 imIDX=reshape(IDX,size(rightPhoto));
 imshow(imIDX==1,[]);
+
+set(handles.exportPhotoRight,'Enable','on');
+set(handles.btnLeft,'Enable','on');
 
 function exportPhotoRight_Callback(hObject, eventdata, handles)
 Image = getframe(handles.photoRight);
 answer = inputdlg('Podaj nazw pliku:','Nazwa pliku', [1 50]);
 
 value = char(answer);
-ext= char('.jpg');
+ext= char('.tif');
 imwrite(Image.cdata, strcat(value,ext));
 
 function btnLeft_Callback(hObject, eventdata, handles)
 global rightPhoto; 
-
+message = sprintf('Left click and hold to begin drawing.\nSimply lift the mouse button to finish');
+uiwait(msgbox(message));
 axes(handles.photoRight);
 imshow(rightPhoto);
 imData=reshape(rightPhoto,[],1);
@@ -247,25 +264,27 @@ function selectImgBrowser_Callback(hObject, eventdata, handles)
 global imageBrowser; 
 global imageBrowserSize;
 cla(handles.imageBrowser,'reset');
+set(handles.imageBrowser,'XTick',[], 'YTick', [])
 
-path=uigetfile('*.tif');
+
+path=uigetfile('*.*');
 imageBrowser=imread(path);
 imageBrowserSize = size(imageBrowser);
 set(handles.imageBrowser,'Units','pixels');
-resizePos = get(handles.imageBrowser,'Position');
-imageBrowser= imresize(imageBrowser, [resizePos(3) resizePos(3)]);
 axes(handles.imageBrowser);
+imageBrowser = imresize(imageBrowser, 0.5);
 imshow(imageBrowser);
 
 function clearBtn_Callback(hObject, eventdata, handles)
 handles.numDotsClicked = [];
 handles.dotsArray = [];
 handles.maskLines=[];
+handles.xyNum=[];
 set(handles.linesText, 'String', '');
 guidata(hObject, handles);
 
 function togglebuttonDots_Callback(hObject, eventdata, handles)
-set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrotêtniaków');
+set(handles.chosenFcnLabel, 'String', 'Zaznaczanie mikrotetniakow');
 numDotsClicked = 1;
 dotsCount = 1;
 set(handles.togglebuttonDots,'string','Mikrotetniaki');
@@ -274,7 +293,7 @@ set(handles.togglebuttonDots,'string','Mikrotetniaki');
    pause(1);
    if(get(hObject,'Value'))
    set(handles.togglebuttonDots,'string','Stop');
-   [x(numDotsClicked), y(numDotsClicked)] = ginput(1)
+   [x(numDotsClicked), y(numDotsClicked)] = ginput(1);
    set(handles.dotsText, 'String', dotsCount);
    hold(handles.photoLeft,'on');
    plot(x(numDotsClicked), y(numDotsClicked), 'yo', 'MarkerSize', 10);
@@ -285,7 +304,10 @@ set(handles.togglebuttonDots,'string','Mikrotetniaki');
    end
  end
 
-set(handles.dotsText, 'String', dotsCount-2);
+dotsCount = dotsCount - 2;
 handles.numDotsClicked = numDotsClicked - 2;
+set(handles.dotsText, 'String', dotsCount);
 hold(handles.photoLeft, 'off');
 guidata(hObject, handles);
+
+function imageBrowser_CreateFcn(hObject, eventdata, handles)
